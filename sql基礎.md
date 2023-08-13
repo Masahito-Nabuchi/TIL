@@ -1,0 +1,88 @@
+# SQL基礎
+
+- Dockerを使用しての運用が前提
+    1. 作業ディレクトリの作成
+    2. ディレクトリ内にdocker-compose.yml ファイルを作成し以下コードを貼り付け
+        
+        ```
+        version: '3.1'
+        
+        services:
+        
+          db:
+            image: mysql:5.7
+            command: --default-authentication-plugin=mysql_native_password
+            restart: always
+            platform: linux/x86_64
+            environment:
+              MYSQL_ROOT_PASSWORD: example
+            volumes:
+              - mysql_data:/var/lib/mysql
+            ports:
+              - 3308:3306
+        volumes:
+          mysql_data:
+        ```
+        
+        補足：`docker compose exec サービス名 bash`
+        
+        上記コードでコンテナ内に入る
+        
+    
+    ## SQL接続から基本操作
+    
+    1. MySQLに接続する
+        
+        `docker compose up -d && docker compose exec db bash`
+        
+        `mysql -u root -p`
+        
+        `Enter password: example`
+        
+        ＊パスワードのexampleは入力しても表示されず設定や詳細は今回はいったん無視
+        
+        ![スクリーンショット 2023-08-13 21.54.05.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8a66c78a-d201-444a-979e-5c395682016f/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2023-08-13_21.54.05.png)
+        
+        上記のようになればOK
+        
+    
+    　2.データベースの作成
+    
+    `create database runteq_study;`
+    
+    この場合runteq_studyというデータベースを作成している
+    
+    *Railsの場合`rails db:create　データベース名`
+    
+    `show databases;`　でデータベース一覧の表示
+    
+    　3.データベースの選択
+    
+    `use runteq_study;`　
+    
+    　4.テーブルの作成
+    
+    `show tables;`　でテーブル詳細を見る
+    
+    ```
+    CREATE TABLE user(
+        id INT(11) AUTO_INCREMENT NOT NULL,
+        first_name VARCHAR(30) NOT NULL,
+        last_name VARCHAR(30) NOT NULL,
+        PRIMARY KEY (id));
+    ```
+    
+    上記コードはuserテーブルを作成しており、主キーをidに設定している。
+    
+    カラムの種類はid、first_name、last_nameの３つ作成
+    
+    ※Railsの場合は`rails g model user first_name:string last_name:string`
+    
+    　　　　　`rails db:migrate`　と同義
+    
+    以下は実作業で都度調べれば大丈夫かと
+    
+    - ****selectとinsert(テーブルにレコードを挿入する)****
+    - ****whereで絞り込む****
+    - ****join(テーブル同士の結合)****
+    - ****on （結合条件を指定する）****
